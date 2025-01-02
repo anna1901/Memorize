@@ -7,25 +7,44 @@
 
 import SwiftUI
 
-struct ContentView: View {
-    let emojis = ["👻", "🎃", "😈", "💀", "👽", "🧟", "🥷🏻", "🕸️", "🕷️", "🦇", "🔪", "🪦", "🔮"]
+enum Themes: CaseIterable {
+    case halloween, medicine, zen, music
     
-    @State var cardCount = 4
+    var emojis: [String] {
+        switch self {
+        case .halloween:
+            ["👻", "🎃", "😈", "💀", "👽", "🧟", "🥷🏻", "🕸️", "🕷️", "🦇", "🔪", "🪦", "🔮"]
+        case .medicine:
+            ["💊", "😷", "🤒", "🤕", "🦵🏻", "🦷", "👂🏻", "👁️", "🫀", "🫁", "🧠", "🧬", "💉","🩺"]
+        case .zen:
+            ["🧿", "🪬", "🔮", "🩷", "🎈", "🧘🏻‍♀️", "🌸", "🪷", "🧠", "🫶🏻", "👁️", "💆🏻‍♀️", "🦋", "🥑", "🏄🏻‍♀️"]
+        case .music:
+            ["🪈", "🎻", "🪕", "🎸", "🪗", "🎷", "🎺", "🪘", "🥁", "🪇", "🎹", "🎼", "🎧", "🎤"]
+        }
+    }
+}
+
+struct ContentView: View {
+    @State var emojis = Themes.zen.emojis
     
     var body: some View {
         VStack {
+            Text("Memorize!")
+                .font(.largeTitle)
+                .foregroundStyle(.brown)
+                .fontWeight(.black)
             ScrollView {
                 cards
             }
             Spacer()
-            cardAdjusters
+            themeSelectionButtons
         }
         .padding()
     }
     
     private var cards: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 90))]) {
-            ForEach(0..<cardCount, id: \.self) { index in
+            ForEach(emojis.indices, id: \.self) { index in
                 CardView(content: emojis[index])
                     .aspectRatio(2/3, contentMode: .fit)
             }
@@ -33,27 +52,14 @@ struct ContentView: View {
         .foregroundStyle(.orange)
     }
     
-    private var cardAdjusters: some View {
-        HStack {
-            cardRemover
-            Spacer()
-            cardAdder
-        }
-        .font(.largeTitle)
-    }
-    
-    private var cardRemover: some View {
-        Button("-") {
-            if cardCount > 0 {
-                cardCount -= 1
-            }
-        }
-    }
-    
-    private var cardAdder: some View {
-        Button("+") {
-            if cardCount < emojis.count {
-                cardCount += 1
+    private var themeSelectionButtons: some View {
+        HStack(spacing: 20) {
+            ForEach(Themes.allCases, id: \.self) { theme in
+                Button {
+                    emojis = theme.emojis
+                } label: {
+                    Text(theme.emojis.first ?? "🩷")
+                }
             }
         }
     }
