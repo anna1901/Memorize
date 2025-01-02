@@ -11,6 +11,29 @@ enum Themes: CaseIterable {
     case halloween, medicine, zen, music
     
     var emojis: [String] {
+        var selectedEmojis = emojisArray
+        selectedEmojis.append(contentsOf: selectedEmojis)
+        return selectedEmojis.shuffled()
+    }
+    
+    var buttonEmoji: String {
+        emojisArray.first ?? "🩷"
+    }
+    
+    var buttonText: String {
+        switch self {
+        case .halloween:
+            "Halloween"
+        case .medicine:
+            "Medicine"
+        case .zen:
+            "Zen"
+        case .music:
+            "Music"
+        }
+    }
+    
+    private var emojisArray: [String] {
         switch self {
         case .halloween:
             ["👻", "🎃", "😈", "💀", "👽", "🧟", "🥷🏻", "🕸️", "🕷️", "🦇", "🔪", "🪦", "🔮"]
@@ -58,7 +81,10 @@ struct ContentView: View {
                 Button {
                     emojis = theme.emojis
                 } label: {
-                    Text(theme.emojis.first ?? "🩷")
+                    VStack {
+                        Text(theme.buttonEmoji)
+                        Text(theme.buttonText)
+                    }
                 }
             }
         }
@@ -67,7 +93,7 @@ struct ContentView: View {
 
 struct CardView: View {
     let content: String
-    @State var isFaceUp = true
+    @State var isFaceUp = false
     
     var body: some View {
         ZStack {
